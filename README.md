@@ -14,7 +14,7 @@
 ## 📋 MỤC LỤC
 - [Giới thiệu môn học](#gioithieumonhoc)
 - [Giảng viên hướng dẫn](#giangvien)
-- [Giới thiệu về bản thân](#banthan)
+- [Giới thiệu về nhóm](#nhom)
 - [Đồ án môn học](#doan)
 
 ## 👉 GIỚI THIỆU MÔN HỌC
