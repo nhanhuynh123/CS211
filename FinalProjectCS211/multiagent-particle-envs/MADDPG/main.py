@@ -1,3 +1,20 @@
+#---------------------------------------------------------------------------------------------------------------------------------------------------------#
+#                                                                                                                                                         #
+#      Để chạy file này thì vào ./FinalProjectCS211/multiagent-particle-envs/multiagent/evironment.py và đổi self.discrete_action_input thành Fasle       #
+#                                                                                                                                                         #
+#---------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+
+# Try not to modify
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+current_dir = os.path.dirname(os.path.abspath(__file__))  # Đường dẫn thư mục hiện tại (AC)
+reward_records_dir = os.path.join(current_dir, "../reward_records")  # Trỏ tới thư mục đồng cấp
+
+file_name = "maddpg_reward_record.npy"
+file_path = os.path.join(reward_records_dir, file_name) # Path to target folder
+
 import numpy as np
 from maddpg import MADDPG
 from buffer import MultiAgentReplayBuffer
@@ -38,8 +55,8 @@ if __name__ == '__main__':
     evaluate = False
     best_score = 0
 
-    if evaluate:
-        maddpg_agents.load_checkpoint()
+    # if evaluate:
+    #     maddpg_agents.load_checkpoint()
 
     for i in range(N_GAMES):
         obs = env.reset()
@@ -47,9 +64,9 @@ if __name__ == '__main__':
         done = [False]*n_agents
         episode_step = 0
         while not any(done):
-            if evaluate:
-                env.render()
-                time.sleep(0.1) # to slow down the action for the video
+            # if evaluate:
+            #     env.render()
+            #     time.sleep(0.1) # to slow down the action for the video
             actions = maddpg_agents.choose_action(obs)
             obs_, reward, done, info = env.step(actions)
             # print(reward)
@@ -77,9 +94,9 @@ if __name__ == '__main__':
         avg_score = np.mean(score_history[-100:])
         if not evaluate:
             if avg_score > best_score:
-                maddpg_agents.save_checkpoint()
+                # maddpg_agents.save_checkpoint()
                 best_score = avg_score
         if i % PRINT_INTERVAL == 0 and i > 0:
             print('episode', i, 'average score {:.1f}'.format(avg_score))
             print('best score', best_score)
-    np.save('maddpg_score_his.npy', score_history)
+    np.save(file_path, score_history)
