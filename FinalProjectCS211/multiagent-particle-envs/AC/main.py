@@ -20,6 +20,7 @@ from pettingzoo.mpe import simple_adversary_v3
 import numpy as np
 import torch as T
 if __name__ == "__main__":
+    n_actions = 5
     scenario = "simple_adversary"
     #env = make_env(scenario)
     env = simple_adversary_v3.parallel_env(N=2, max_cycles=40, continuous_actions=True)
@@ -34,7 +35,7 @@ if __name__ == "__main__":
 
     # action space is a list of arrays, assume each agent has same action space
     n_actions = 5
-    maac = MultiAgentActorCritic(actor_dims, n_actions, n_agents, 0.001, 0.001)
+    maac = MultiAgentActorCritic(actor_dims, n_actions, n_agents,n_actions, 0.001, 0.001)
 
     PRINT_INTERVAL = 500
     N_GAMES = 25000
@@ -68,6 +69,6 @@ if __name__ == "__main__":
             best_score = avg_score
         if i % PRINT_INTERVAL == 0:
             print("Episode ", i, " average score {:.1f}".format(avg_score))
-            print(best_score)
+            print("Best Score: ",best_score)
     np.save(file_path, score_history)        
     

@@ -5,12 +5,13 @@ from pettingzoo.mpe import simple_adversary_v3
 env = simple_adversary_v3.env(N=2, max_cycles=25, continuous_actions=False)
 env.reset()
 class MultiAgentActorCritic:
-    def __init__(self, actor_dims, action_dims, num_agents, gamma=0.99, alpha=0.001, beta=0.001):
+    def __init__(self, actor_dims, action_dims, num_agents,n_actions, gamma=0.99, alpha=0.001, beta=0.001):
         self.agents = []
         self.num_agents = num_agents
+        self.n_actions=n_actions
         self.agents = {}
         for agent_idx, agent_name in enumerate(env.possible_agents):
-            self.agents[agent_name]= Agent(actor_dims[agent_idx], action_dims,agent_name, gamma, alpha, beta)
+            self.agents[agent_name]= Agent(actor_dims[agent_idx], action_dims,agent_name,n_actions, gamma, alpha, beta)
 
     
     def choose_action(self, raw_obs):
@@ -21,7 +22,7 @@ class MultiAgentActorCritic:
         return actions
 
     def choose_action(self, raw_obs):
-        
+
         actions = {agent.agent_name: agent.choose_action(raw_obs[agent.agent_name]) for agent in self.agents.values()}
         return actions
 
@@ -55,7 +56,8 @@ class MultiAgentActorCritic:
             advantage = reward + agent.gamma * next_state_value - state_value
 
             # Tính toán actor_loss và critic_loss
-            log_prob = T.log(action_probs[0, actions[agent_name]])
+            log_prob = T.log(action_probs[0, actions[agent_name]] + 1e-8)
+
             
             #actor_loss = -log_prob * advantage.detach()
             actor_loss = (-log_prob * advantage.detach()).mean()
