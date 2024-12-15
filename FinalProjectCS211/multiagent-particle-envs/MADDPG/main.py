@@ -59,7 +59,7 @@ if __name__ == '__main__':
     score_history = []
     evaluate = False
     best_score = -3
-    seeds = np.load("/Users/cicilian/Desktop/Multi-Agent-Deep-Deterministic-Policy-Gradients-PyTorch/seed.npy")
+    #seeds = np.load("/Users/cicilian/Desktop/Multi-Agent-Deep-Deterministic-Policy-Gradients-PyTorch/seed.npy")
     if evaluate:
         maddpg_agents.load_checkpoint()
     time.sleep(1)

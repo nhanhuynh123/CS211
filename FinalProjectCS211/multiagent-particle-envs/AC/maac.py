@@ -1,29 +1,32 @@
 import torch as T
 import numpy as np
 from agent import Agent
-
+from pettingzoo.mpe import simple_adversary_v3
+env = simple_adversary_v3.env(N=2, max_cycles=25, continuous_actions=False)
+env.reset()
 class MultiAgentActorCritic:
     def __init__(self, actor_dims, action_dims, num_agents, gamma=0.99, alpha=0.001, beta=0.001):
         self.agents = []
         self.num_agents = num_agents
-        for agent_idx in range(self.num_agents):
-            self.agents.append(Agent(actor_dims[agent_idx], action_dims, gamma, alpha, beta))
-    
-    def choose_action(self, obs):
-        actions_probs = []
-        with T.no_grad():
-            for idx, agent in enumerate(self.agents):
-                actions_probs.append(agent.choose_action(obs[idx]))
+        self.agents = {}
+        for agent_idx, agent_name in enumerate(env.possible_agents):
+            self.agents[agent_name]= Agent(actor_dims[agent_idx], action_dims,agent_name, gamma, alpha, beta)
 
+    
+    def choose_action(self, raw_obs):
         actions = []
-        for i in range(len(actions_probs)):
-            actions.append(np.random.choice(actions_probs[i].shape[0]))
+        for agent_idx, agent in enumerate(self.agents):
+            action = agent.choose_action(raw_obs[agent_idx])
+            actions.append(action)
+        return actions
+
+    def choose_action(self, raw_obs):
+        actions = {agent.agent_name: agent.choose_action(raw_obs[agent.agent_name]) for agent in self.agents.values()}
         return actions
 
     def learn(self, states, actions, rewards, next_states, dones):
-        device = self.agents[0].actor.device
+        device = self.agents['adversary_0'].actor.device
         for idx, agent in enumerate(self.agents):
-
             state = T.tensor(states[idx], dtype=T.float).unsqueeze(0).to(device)
             next_state = T.tensor(next_states[idx], dtype=T.float).to(device)
             reward = T.tensor(rewards[idx], dtype=T.float).to(device)
