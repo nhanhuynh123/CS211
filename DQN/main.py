@@ -24,15 +24,14 @@ if __name__ == "__main__":
     SEED = 42
     np.random.seed(SEED)
     env.reset(seed=SEED)
-
     # Thông số của agent và environment
     agents = env.agents
     n_agents = env.num_agents
-    input_dims = env.observation_spaces[agents[0]].shape[0]
-    n_actions = env.action_spaces[agents[0]].n
+    input_dims = {agent: env.observation_space(agent).shape[0] for agent in agents} # Kích thước quan sát
+    n_actions = env.action_spaces[agents[0]].n  # Số lượng hành động
 
     # Khởi tạo DQN cho từng agent
-    dqn_agents = {agent: DQNAgent(input_dims, n_actions, lr=0.001, gamma=0.99, epsilon=1.0) for agent in agents}
+    dqn_agents = {agent: DQNAgent(input_dims[agent], n_actions, lr=0.001, gamma=0.99, epsilon=1.0) for agent in agents}
 
     # Thông số huấn luyện
     N_GAMES = 1000
@@ -54,7 +53,9 @@ if __name__ == "__main__":
             actions = {agent: dqn_agents[agent].choose_action(obs[agent]) for agent in agents}
 
             # Thực hiện hành động
-            next_obs, rewards, dones, infos = env.step(actions)
+            next_obs, rewards, termination, truncation, _ = env.step(actions)
+            if episode_step >= MAX_STEPS:
+                done = {agent: True for agent in agents}
             state = obs_list_to_state_vector(obs)
             next_state = obs_list_to_state_vector(next_obs)
 
@@ -65,11 +66,10 @@ if __name__ == "__main__":
                     action=actions[agent],
                     reward=rewards[agent],
                     next_state=next_obs[agent],
-                    done=dones[agent]
+                    done = done[agent]
                 )
 
             obs = next_obs
-            done = dones
             score += sum(rewards.values())
             total_steps += 1
             episode_step += 1

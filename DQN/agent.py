@@ -1,4 +1,5 @@
 import torch as T
+import torch.nn.functional as F
 import torch.nn as nn
 import torch.optim as optim
 import numpy as np
@@ -13,9 +14,9 @@ class DQNNetwork(nn.Module):
         self.q_values = nn.Linear(64, action_dims)
 
     def forward(self, state):
-        x = T.relu(self.fc1(state))
-        x = T.relu(self.fc2(x))
-        q_values = self.q_values(x)
+        x = F.relu(self.fc1(state))
+        x_ = F.relu(self.fc2(x))
+        q_values = self.q_values(x_)
         return q_values
 
 class DQNAgent:
