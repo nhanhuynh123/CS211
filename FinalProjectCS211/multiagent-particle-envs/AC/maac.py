@@ -21,39 +21,52 @@ class MultiAgentActorCritic:
         return actions
 
     def choose_action(self, raw_obs):
+        
         actions = {agent.agent_name: agent.choose_action(raw_obs[agent.agent_name]) for agent in self.agents.values()}
         return actions
 
-    def learn(self, states, actions, rewards, next_states, dones):
+    def learn(self, obs, actions, rewards, next_obs, dones):
         device = self.agents['adversary_0'].actor.device
-        for idx, agent in enumerate(self.agents):
+
+        # Chuyển đổi obs và next_obs thành danh sách các trạng thái
+        states = [obs[agent_name] for agent_name in self.agents.keys()]
+        next_states = [next_obs[agent_name] for agent_name in self.agents.keys()]
+        
+        # Chuyển đổi rewards và dones thành danh sách
+        rewards_list = [rewards[agent_name] for agent_name in self.agents.keys()]
+        dones_list = [dones[idx] for idx, _ in enumerate(self.agents.keys())]
+
+
+        for idx, (agent_name, agent) in enumerate(self.agents.items()):
+            # Xử lý trạng thái và phần thưởng cho từng agent
             state = T.tensor(states[idx], dtype=T.float).unsqueeze(0).to(device)
             next_state = T.tensor(next_states[idx], dtype=T.float).to(device)
-            reward = T.tensor(rewards[idx], dtype=T.float).to(device)
-            done = T.tensor(dones[idx]).to(device)
+            reward = T.tensor(rewards_list[idx], dtype=T.float).to(device)
+            done = T.tensor(dones_list[idx]).to(device)
+            # Hành động của agent hiện tại
             action_probs = agent.actor.forward(state)
             
-            # Calculate V(s_t) and V(s_t+1)
-            
+            # Tính giá trị trạng thái
             state_value = agent.critic.forward(state)[0]
             next_state_value = agent.critic.forward(next_state)[0]
-            # Calculate advantage
+
+            # Tính advantage
             next_state_value[done] = 0.0
             advantage = reward + agent.gamma * next_state_value - state_value
 
-            # Calculate actor_loss, critic_loss
-            log_prob = T.log(action_probs[0, actions[idx]])
-            actor_loss = -log_prob * advantage.detach()
-            print(advantage)
-            critic_loss = advantage**2
-            # print(log_prob)
-            # print(advantage)
-            # Update actor
+            # Tính toán actor_loss và critic_loss
+            log_prob = T.log(action_probs[0, actions[agent_name]])
+            
+            #actor_loss = -log_prob * advantage.detach()
+            actor_loss = (-log_prob * advantage.detach()).mean()
+            critic_loss = advantage ** 2
+
+            # Cập nhật actor
             agent.actor.optimizer.zero_grad()
             actor_loss.backward()
             agent.actor.optimizer.step()
 
-            # Update critic
+            # Cập nhật critic
             agent.critic.optimizer.zero_grad()
             critic_loss.backward()
             agent.critic.optimizer.step()

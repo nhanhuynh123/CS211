@@ -15,5 +15,4 @@ class Agent:
     def choose_action(self, state):
         state = T.tensor(state, dtype=T.float).to(self.actor.device)
         actions = self.actor.forward(state)
-
         return actions.detach().numpy()

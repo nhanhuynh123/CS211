@@ -55,8 +55,8 @@ if __name__ == "__main__":
             state_ = np.concatenate([i for i in obs_.values()])            
             if episode_step >= MAX_STEPS:
                 dones = [True] * n_agents
-            maac.learn(obs,state, actions, rewards, obs_,state_, dones)
-            score += sum(rewards)
+            maac.learn(obs, actions, rewards, obs_, dones)
+            score += sum(rewards.values())
         
             total_steps += 1
             episode_step += 1
