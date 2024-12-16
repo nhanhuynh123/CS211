@@ -4,6 +4,7 @@ import numpy as np
 import time
 from agent import DQNAgent
 from pettingzoo.mpe import simple_adversary_v3
+import matplotlib.pyplot as plt
 
 # Thêm đường dẫn cho module khác nếu cần
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -34,7 +35,7 @@ if __name__ == "__main__":
     dqn_agents = {agent: DQNAgent(input_dims[agent], n_actions, lr=0.001, gamma=0.99, epsilon=1.0) for agent in agents}
 
     # Thông số huấn luyện
-    N_GAMES = 1000
+    N_GAMES = 25000
     MAX_STEPS = 25
     TARGET_UPDATE_INTERVAL = 10
     total_steps = 0
@@ -90,3 +91,11 @@ if __name__ == "__main__":
         if avg_score > best_score:
             best_score = avg_score
             print(f"New best score at episode {i}: {best_score:.2f}")
+         # Vẽ đồ thị kết quả
+    plt.figure(figsize=(10, 6))
+    plt.plot(score_history)
+    plt.title("Reward Trend Across Episodes")
+    plt.xlabel("Episode")
+    plt.ylabel("Total Reward")
+    plt.grid()
+    plt.show()
