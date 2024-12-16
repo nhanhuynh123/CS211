@@ -42,7 +42,7 @@
 | `22521070` | Lưu Đoàn Ngọc Phát | 22521070@gm.uit.edu.vn  |
 | `22520211` | Huỳnh Danh Đạt     | 22520211@gm.uit.edu.vn  | 
 | `2252xxxx` | Phan Thanh Đăng    | 2252xxxx@gm.uit.edu.vn  | 
-| `2252xxxx` | Huỳnh Chí Nhân     | 2252xxxx@gm.uit.edu.vn  | 
+| `22520996` | Huỳnh Chí Nhân     | 22520996@gm.uit.edu.vn  | 
 <hr>
 
 ## ✈️ ĐỒ ÁN MÔN HỌC
