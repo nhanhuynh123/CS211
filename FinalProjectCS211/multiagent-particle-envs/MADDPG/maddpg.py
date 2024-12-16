@@ -34,12 +34,12 @@ class MADDPG:
         for agent_name, agent in self.agents.items():
             agent.load_models()
 
-    def choose_action(self, raw_obs):
-        actions = []
-        for agent_idx, agent in enumerate(self.agents):
-            action = agent.choose_action(raw_obs[agent_idx])
-            actions.append(action)
-        return actions
+    # def choose_action(self, raw_obs):
+    #     actions = []
+    #     for agent_idx, agent in enumerate(self.agents):
+    #         action = agent.choose_action(raw_obs[agent_idx])
+    #         actions.append(action)
+    #     return actions
 
     def choose_action(self, raw_obs):
         actions = {agent.agent_name: agent.choose_action(raw_obs[agent.agent_name]) for agent in self.agents.values()}
