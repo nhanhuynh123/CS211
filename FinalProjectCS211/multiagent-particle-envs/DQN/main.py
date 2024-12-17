@@ -7,7 +7,7 @@ from save_file import save_with_unique_name
 
 from dataclasses import dataclass
 import numpy as np
-from madqn import MultiAgentDQN
+from MADQN import MultiAgentDQN
 from buffer import MultiAgentReplayBuffer
 from pettingzoo.mpe import simple_adversary_v3
 import tyro
