@@ -31,7 +31,7 @@ if __name__ == "__main__":
     maac = MultiAgentActorCritic(actor_dims, n_actions, n_agents, 0.99, 0.001, 0.001)
 
     PRINT_INTERVAL = 500
-    N_GAMES = 25000
+    N_GAMES = 100000
     MAX_STEPS = 25
     total_steps = 0
     score_history = []

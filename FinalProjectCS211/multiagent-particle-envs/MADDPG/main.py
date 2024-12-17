@@ -44,7 +44,7 @@ if __name__ == '__main__':
                                     agent_names=env.agents)
 
     PRINT_INTERVAL = 500
-    N_GAMES = 25000
+    N_GAMES = 100000
     MAX_STEPS =25
     total_steps = 0
     score_history = []

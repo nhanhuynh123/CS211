@@ -7,7 +7,7 @@ from save_file import save_with_unique_name
 
 
 import numpy as np
-from MADQN import MultiAgentDQN
+from madqn import MultiAgentDQN
 from buffer import MultiAgentReplayBuffer
 from pettingzoo.mpe import simple_adversary_v3
 
@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
     # Thông số huấn luyện
     PRINT_INTERVAL=500
-    N_GAMES = 25000
+    N_GAMES = 100000
     EXPLORATION_FRACTION = 0.5
     MAX_STEPS = 25
     TRAIN_FREQUENCY = 10
