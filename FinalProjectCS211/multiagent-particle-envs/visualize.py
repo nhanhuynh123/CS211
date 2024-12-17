@@ -24,12 +24,13 @@ def plot(data):
 
     plt.legend()
     plt.show()
-file = ["maac_reward_record_1.npy", "maddpg_reward_record_1.npy"]
+file = ["maac_reward_record_1.npy", "maddpg_reward_record_1.npy", "madqn_reward_record_1.npy"]
 dir = []
 for i in range(len(file)):
     dir.append(os.path.join(reward_records_dir, file[i]))
 data = {
     "Actor Critic": np.load(dir[0]),
-    "MADDPG": np.load(dir[1])
+    "MADDPG": np.load(dir[1]),
+    "DQN": np.load(dir[2])
 }
 plot(data)

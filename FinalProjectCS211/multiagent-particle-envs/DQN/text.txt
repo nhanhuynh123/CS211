@@ -1,0 +1,6 @@
+Episode  0  average score 70.6
+Best Score:  70.63919274983192
+torch.Size([3, 1024, 1])
+torch.Size([1024, 3])
+torch.Size([1024, 3])
+tensor([0.4385, 0.1203, 0.2378,  ..., 0.2243, 0.3474, 0.2887])
