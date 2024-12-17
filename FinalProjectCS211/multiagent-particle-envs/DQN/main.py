@@ -5,17 +5,28 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from save_file import save_with_unique_name
 
-
+from dataclasses import dataclass
 import numpy as np
 from madqn import MultiAgentDQN
 from buffer import MultiAgentReplayBuffer
 from pettingzoo.mpe import simple_adversary_v3
+import tyro
+@dataclass
+class Args:
+    epochs: int  = 25000
+    # Number games
+    PRINT_INTERVAL: int = 500
+    # Print frequency
+    MAX_STEPS: int = 25
+    # Max episode steps
 
 def linear_schedule(start_e: float, end_e: float, duration: int, t: int):
     slope = (end_e - start_e) / duration
     return max(slope * t + start_e, end_e)
 
 if __name__ == "__main__":
+    args = tyro.cli(Args)
+
     n_actions = 5  # Số lượng hành động
     scenario = "simple_adversary"
     env = simple_adversary_v3.parallel_env(N=2, max_cycles=40, continuous_actions=False)
@@ -46,17 +57,15 @@ if __name__ == "__main__":
     obs = env.reset()
 
     # Thông số huấn luyện
-    PRINT_INTERVAL=500
-    N_GAMES = 100000
+
     EXPLORATION_FRACTION = 0.5
-    MAX_STEPS = 25
     TRAIN_FREQUENCY = 10
     TARGET_UPDATE_FREQUENCY = 500
     total_steps = 0
     score_history = []
     best_score = -np.inf
 
-    for i in range(N_GAMES):
+    for i in range(args.epochs):
         # Reset lại môi trường
         obs, _ = env.reset(seed=i)
         score = 0
@@ -65,13 +74,13 @@ if __name__ == "__main__":
 
         while not any(done):
             # Chọn hành động từ các agent
-            epsilon = linear_schedule(1, 0.001,N_GAMES * EXPLORATION_FRACTION, i)
+            epsilon = linear_schedule(1, 0.001, args.epochs * EXPLORATION_FRACTION, i)
             actions = madqn.choose_actions(obs, epsilon)
             # print(actions)
             # Thực hiện hành động
             next_obs, rewards, termination, truncation, _ = env.step(actions)
 
-            if any(termination.values()) or any(truncation.values()) or (episode_step >= MAX_STEPS):
+            if any(termination.values()) or any(truncation.values()) or (episode_step >= args.MAX_STEPS):
                 done = [True] * n_agents
 
             # Lưu vào buffer
@@ -98,7 +107,7 @@ if __name__ == "__main__":
         # Lưu checkpoint khi có kết quả tốt nhất
         if avg_score > best_score:
             best_score = avg_score
-        if i % PRINT_INTERVAL == 0:
+        if i % args.PRINT_INTERVAL == 0:
             print("Episode ", i, " average score {:.1f}".format(avg_score))
             print("Best Score: ",best_score)
 

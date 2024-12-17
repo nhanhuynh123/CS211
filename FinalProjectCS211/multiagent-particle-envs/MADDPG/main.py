@@ -5,13 +5,23 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from save_file import save_with_unique_name
 
-
+from dataclasses import dataclass
 import numpy as np
 from maddpg import MADDPG
 from buffer import MultiAgentReplayBuffer
 from pettingzoo.mpe import simple_adversary_v3
 import warnings
 import time
+import tyro 
+
+@dataclass
+class Args:
+    epochs: int  = 25000
+    # Number games
+    PRINT_INTERVAL: int = 500
+    # Print frequency
+    MAX_STEPS: int =25
+    # Max episode steps
 
 def obs_list_to_state_vector(observation):
     state = np.array([])
@@ -21,6 +31,7 @@ def obs_list_to_state_vector(observation):
 
 
 if __name__ == '__main__':
+    args = tyro.cli(Args)
     # scenario = 'simple'
     scenario = 'simple_adversary'
     env = simple_adversary_v3.parallel_env(N=2, max_cycles=40, continuous_actions=True)
@@ -43,9 +54,7 @@ if __name__ == '__main__':
                                     n_actions, n_agents, batch_size=1024,
                                     agent_names=env.agents)
 
-    PRINT_INTERVAL = 500
-    N_GAMES = 100000
-    MAX_STEPS =25
+
     total_steps = 0
     score_history = []
     evaluate = False
@@ -53,7 +62,7 @@ if __name__ == '__main__':
     if evaluate:
         maddpg_agents.load_checkpoint()
     time.sleep(1)
-    for i in range(N_GAMES):
+    for i in range(args.epochs):
         obs, _ = env.reset(seed=i)
         score = 0
         done = [False] * n_agents
@@ -69,10 +78,10 @@ if __name__ == '__main__':
             state = np.concatenate([i for i in obs.values()])
             state_ = np.concatenate([i for i in obs_.values()])
 
-            if episode_step >= MAX_STEPS:
+            if episode_step >= args.MAX_STEPS:
                 done = [True] * n_agents
 
-            if any(termination.values()) or any(truncation.values()) or (episode_step >= MAX_STEPS):
+            if any(termination.values()) or any(truncation.values()) or (episode_step >= args.MAX_STEPS):
                 done = [True] * n_agents
 
             memory.store_transition(obs, state, actions, reward, obs_, state_, done)
@@ -90,9 +99,9 @@ if __name__ == '__main__':
         avg_score = np.mean(score_history[-100:])
         if not evaluate:
 
-            if (avg_score > best_score) and (i > PRINT_INTERVAL):
+            if (avg_score > best_score):
                 best_score = avg_score
-        if i % PRINT_INTERVAL == 0:
+        if i % args.PRINT_INTERVAL == 0:
             print('episode', i, 'average score {:.1f}'.format(avg_score))
             print("best_score", best_score)
 

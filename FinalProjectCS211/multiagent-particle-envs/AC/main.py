@@ -5,14 +5,25 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from save_file import save_with_unique_name
 
-
+from dataclasses import dataclass
 import numpy as np
 import torch as T
 from maac import MultiAgentActorCritic
 from pettingzoo.mpe import simple_adversary_v3
+import tyro 
 
+@dataclass
+class Args:
+    epochs: int  = 25000
+    # Number games
+    PRINT_INTERVAL: int = 500
+    # Print frequency
+    MAX_STEPS: int = 25
+    # Max episode steps
 
 if __name__ == "__main__":
+    args = tyro.cli(Args)
+
     n_actions = 5
     scenario = "simple_adversary"
     #env = make_env(scenario)
@@ -30,14 +41,11 @@ if __name__ == "__main__":
     n_actions = 5
     maac = MultiAgentActorCritic(actor_dims, n_actions, n_agents, 0.99, 0.001, 0.001)
 
-    PRINT_INTERVAL = 500
-    N_GAMES = 100000
-    MAX_STEPS = 25
     total_steps = 0
     score_history = []
     best_score = 0
 
-    for i in range(N_GAMES):
+    for i in range(args.epochs):
         obs, _ = env.reset(seed=i)
         score = 0
         dones = [False] * n_agents
@@ -47,7 +55,7 @@ if __name__ == "__main__":
             actions = maac.choose_action(obs)
             obs_, rewards, termination, truncation, _ = env.step(actions)
 
-            if any(termination.values()) or any(truncation.values()) or (episode_step >= MAX_STEPS):
+            if any(termination.values()) or any(truncation.values()) or (episode_step >= args.MAX_STEPS):
                 dones = [True] * n_agents
             maac.learn(obs, actions, rewards, obs_, dones)
             score += sum(rewards.values())
@@ -60,7 +68,7 @@ if __name__ == "__main__":
 
         if best_score < avg_score:
             best_score = avg_score
-        if i % PRINT_INTERVAL == 0:
+        if i % args.PRINT_INTERVAL == 0:
             print("Episode ", i, " average score {:.1f}".format(avg_score))
             print("Best Score: ",best_score)
 
