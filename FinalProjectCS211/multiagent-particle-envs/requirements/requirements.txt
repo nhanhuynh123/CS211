@@ -2,3 +2,4 @@ torch
 numpy
 pettingzoo
 pygame
+tyro

@@ -19,28 +19,20 @@ def plot(data):
     plt.ylabel("Average Score")
     plt.grid()
     for name, score in data.items():
-        average = moving_average(score, 10000)
+        average = moving_average(score, 10)
         plt.plot(average, label=name)
 
     plt.legend()
     plt.show()
-file = ["maac_reward_record_1.npy", "maddpg_reward_record_1.npy", "madqn_reward_record_1.npy", "maddpg_reward_record.npy"]
+file = ["maac_reward_record_2.npy", "maddpg_reward_record_1.npy", "madqn_reward_record_1.npy", "ddpg_reward_record.npy"]
 dir = []
 for i in range(len(file)):
     dir.append(os.path.join(reward_records_dir, file[i]))
 data = {
     "Actor Critic": np.load(dir[0]),
-    "MADDPG": np.load(dir[1]),
-    "DQN": np.load(dir[2]),
-    "DDPG": np.load(dir[3])
+    # "MADDPG": np.load(dir[1]),
+    # "DQN": np.load(dir[2]),
+    # "DDPG": np.load(dir[3])
 }
-# plot(data)
+plot(data)
 
-
-plt.figure(figsize=(10, 6))
-plt.hist(data["DDPG"], bins=50, color='blue', edgecolor='black')
-plt.title('Histogram of Training Data')
-plt.xlabel('Value')
-plt.ylabel('Frequency')
-plt.grid(True)
-plt.show()
