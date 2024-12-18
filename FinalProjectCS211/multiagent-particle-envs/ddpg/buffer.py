@@ -55,7 +55,7 @@ class MultiAgentReplayBuffer:
         self.reward_memory[index] = [i for i in reward.values()]
         self.terminal_memory[index] = done
         self.mem_cntr += 1
-
+        
     def sample_buffer(self):
         max_mem = min(self.mem_cntr, self.mem_size)
         

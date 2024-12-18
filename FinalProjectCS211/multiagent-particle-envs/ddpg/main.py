@@ -178,7 +178,7 @@ if __name__ == '__main__':
                 done = [True] * n_agents
 
             memory.store_transition(obs, actions, reward, obs_, done)
-            
+
             if total_steps % 100 == 0 and not evaluate:
                 ddpg_agents.learn(memory)
 
