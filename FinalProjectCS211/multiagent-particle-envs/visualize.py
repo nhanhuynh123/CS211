@@ -24,7 +24,9 @@ def plot(data):
 
     plt.legend()
     plt.show()
-file = ["maac_reward_record_5.npy", "maddpg_reward_record_11.npy", "madqn_reward_record.npy", "ddpg_reward_record_3.npy"]
+# 4, 11, 2, 3
+#
+file = ["maac_reward_record_4.npy", "maddpg_reward_record_11.npy", "madqn_reward_record_2.npy", "ddpg_reward_record_3.npy"]
 dir = []
 for i in range(len(file)):
     dir.append(os.path.join(reward_records_dir, file[i]))
