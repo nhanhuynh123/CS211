@@ -22,6 +22,7 @@ class Args:
     # Print frequency
     MAX_STEPS: int =25
     # Max episode steps
+    demo = False
 
 def obs_list_to_state_vector(observation):
     state = np.array([])
@@ -58,7 +59,7 @@ if __name__ == '__main__':
     total_steps = 0
     score_history = []
     evaluate = False
-    best_score = -3
+    best_score = -float("inf")
     if evaluate:
         maddpg_agents.load_checkpoint()
     time.sleep(1)
