@@ -22,8 +22,8 @@ class Agent:
     def choose_action(self, observation):
         state = T.tensor([observation], dtype=T.float).to(self.actor.device)
         action = self.actor.forward(state)
-        min_v = (1-action).to(self.actor.device)
-        noise = (T.rand(1) * min_v).to(self.actor.device)
+        min_v = (1-action)
+        noise = (T.rand(1).to(self.actor.device) * min_v).to(self.actor.device)
 
         action_ = action + noise
         return action_.detach().cpu().numpy()[0]
