@@ -89,9 +89,9 @@ class MADDPG:
         old_actions = []
         for idx, (name, agent) in enumerate(self.agents.items()):
             if idx != 0 and idx != len(all_agents_new_actions)-1:
-                new_actions.append(T.cat([acts for acts in all_agents_new_actions[idx-1, idx+2]], dim=1))
-                mu_actions.append(T.cat([acts for acts in all_agents_new_mu_actions[idx-1, idx+2]], dim=1))
-                old_actions.append(T.cat([acts for acts in old_agents_actions[idx-1, idx+2]], dim=1))
+                new_actions.append(T.cat([acts for acts in all_agents_new_actions[idx-1:idx+2]], dim=1))
+                mu_actions.append(T.cat([acts for acts in all_agents_new_mu_actions[idx-1:idx+2]], dim=1))
+                old_actions.append(T.cat([acts for acts in old_agents_actions[idx-1:idx+2]], dim=1))
                 
             else:
                 if idx == 0:
@@ -99,9 +99,9 @@ class MADDPG:
                     mu_actions.append(T.cat([acts for acts in all_agents_new_mu_actions[idx:idx+2]], dim=1))
                     old_actions.append(T.cat([acts for acts in old_agents_actions[idx:idx+2]], dim=1))
                 else: 
-                    new_actions.append(T.cat([acts for acts in all_agents_new_actions[idx-1, idx+1]], dim=1))
-                    mu_actions.append(T.cat([acts for acts in all_agents_new_mu_actions[idx-1, idx+1]], dim=1))
-                    old_actions.append(T.cat([acts for acts in old_agents_actions[idx-1, idx+1]], dim=1))
+                    new_actions.append(T.cat([acts for acts in all_agents_new_actions[idx-1:idx+1]], dim=1))
+                    mu_actions.append(T.cat([acts for acts in all_agents_new_mu_actions[idx-1:idx+1]], dim=1))
+                    old_actions.append(T.cat([acts for acts in old_agents_actions[idx-1:idx+1]], dim=1))
 
 
 
