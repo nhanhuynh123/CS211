@@ -76,3 +76,4 @@ werkzeug
 wheel
 zipp
 pymunk
+supersuit
