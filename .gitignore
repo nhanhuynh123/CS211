@@ -1,0 +1,11 @@
+# Ignore buffer files
+*.cache
+*.tmp
+*.log
+
+# Ignore Python compiled files
+__pycache__/
+*.py[cod]
+
+# Ignore text file
+*.txt

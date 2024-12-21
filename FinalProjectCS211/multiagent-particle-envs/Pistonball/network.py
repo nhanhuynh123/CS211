@@ -37,6 +37,7 @@ class ActorNetwork(nn.Module):
     def forward(self, state):
         state = state.permute(0, 3, 1, 2)
         pi = self.state_net(state/255.0)
+        pi = F.tanh(pi)
         return pi
 
     def save_checkpoint(self):
