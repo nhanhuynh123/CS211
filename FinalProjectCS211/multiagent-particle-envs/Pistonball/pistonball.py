@@ -59,8 +59,8 @@ if __name__ == '__main__':
                            alpha=0.01, beta=0.01, scenario=scenario,
                            chkpt_dir='tmp/maddpg/')
 
-    memory = MultiAgentReplayBuffer(1000000, actor_dims,
-                                    n_action_p_agent, n_agents, batch_size=1024,
+    memory = MultiAgentReplayBuffer(10000, actor_dims,
+                                    n_action_p_agent, n_agents, batch_size=64,
                                     agent_names=env.possible_agents)
 
     total_steps = 0
