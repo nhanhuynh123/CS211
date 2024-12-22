@@ -8,11 +8,11 @@ env.reset()
 class MADDPG:
     def __init__(self, actor_dims, critic_dims, n_agents, n_actions, 
                  scenario='simple',  alpha=0.01, beta=0.01, fc1=64, 
-                 fc2=64, gamma=0.99, tau=0.01, chkpt_dir='tmp/maddpg/'):
+                 fc2=64, gamma=0.99, tau=0.01, chkpt_dir=dir):
         self.agents = []
         self.n_agents = n_agents
         self.n_actions = n_actions
-        chkpt_dir += scenario
+        chkpt_dir += "/" +scenario
         self.agents = {}
         for agent_idx, agent_name in enumerate(env.possible_agents):
             self.agents[agent_name] = Agent(actor_dims[agent_idx],
@@ -33,6 +33,7 @@ class MADDPG:
         print('... loading checkpoint ...')
         for agent_name, agent in self.agents.items():
             agent.load_models()
+        print('loading successful')
 
     # def choose_action(self, raw_obs):
     #     actions = []

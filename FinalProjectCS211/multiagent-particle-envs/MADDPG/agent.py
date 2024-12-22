@@ -29,8 +29,7 @@ class Agent:
         state = T.tensor([observation], dtype=T.float).to(self.actor.device)
         actions = self.actor.forward(state)
         min_v = (1 - actions).min()
-        noise = (T.rand(self.n_actions) * min_v).to(self.actor.device)
-
+        noise = (T.rand(self.n_actions, device=self.actor.device) * min_v)
         action = actions + noise
         return action.detach().cpu().numpy()[0]
 

@@ -4,7 +4,8 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from save_file import save_with_unique_name
-
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
 from dataclasses import dataclass
 import numpy as np
 from maddpg import MADDPG
@@ -16,7 +17,7 @@ import tyro
 
 @dataclass
 class Args:
-    epochs: int  = 25000
+    epochs: int  = 40000
     # Number games
     PRINT_INTERVAL: int = 500
     # Print frequency
@@ -33,9 +34,10 @@ def obs_list_to_state_vector(observation):
 
 if __name__ == '__main__':
     args = tyro.cli(Args)
+    dir = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__))), "tmp/maddpg")
     # scenario = 'simple'
     scenario = 'simple_adversary'
-    env = simple_adversary_v3.parallel_env(N=2, max_cycles=40, continuous_actions=True)
+    env = simple_adversary_v3.parallel_env(N=2, max_cycles=40, continuous_actions=True, render_mode ="human")
     obs = env.reset()
 
     n_agents = env.num_agents
@@ -46,19 +48,19 @@ if __name__ == '__main__':
 
     # action space is a list of arrays, assume each agent has same action space
     n_actions = 5
+    #os.makedirs("tmp/maddpg", exist_ok=True)
     maddpg_agents = MADDPG(actor_dims, critic_dims, n_agents, n_actions,
                            fc1=64, fc2=64,
                            alpha=0.01, beta=0.01, scenario=scenario,
-                           chkpt_dir='tmp/maddpg/')
+                           chkpt_dir=dir)
 
     memory = MultiAgentReplayBuffer(1000000, critic_dims, actor_dims,
                                     n_actions, n_agents, batch_size=1024,
                                     agent_names=env.agents)
 
-
     total_steps = 0
     score_history = []
-    evaluate = False
+    evaluate = True
     best_score = -float("inf")
     if evaluate:
         maddpg_agents.load_checkpoint()
@@ -105,6 +107,6 @@ if __name__ == '__main__':
         if i % args.PRINT_INTERVAL == 0:
             print('episode', i, 'average score {:.1f}'.format(avg_score))
             print("best_score", best_score)
-
     file_name = "maddpg_reward_record"
     save_with_unique_name(file_name=file_name, data=score_history)
+    maddpg_agents.save_checkpoint()
