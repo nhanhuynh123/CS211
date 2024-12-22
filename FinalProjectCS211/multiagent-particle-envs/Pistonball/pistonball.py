@@ -18,7 +18,7 @@ import supersuit as ss
 class Args:
     epochs: int  = 25000
     # Number games
-    PRINT_INTERVAL: int = 10
+    PRINT_INTERVAL: int = 50
     # Print frequency
     MAX_STEPS: int = 100
     # Max episode steps
