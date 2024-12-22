@@ -9,3 +9,5 @@ __pycache__/
 
 # Ignore text file
 *.txt
+
+FinalProjectCS211/multiagent-particle-envs/Pistonball/tmp/maddpg/
