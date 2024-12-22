@@ -18,9 +18,9 @@ import supersuit as ss
 class Args:
     epochs: int  = 25000
     # Number games
-    PRINT_INTERVAL: int = 500
+    PRINT_INTERVAL: int = 10
     # Print frequency
-    MAX_STEPS: int = 25
+    MAX_STEPS: int = 100
     # Max episode steps
     demo = False
 
@@ -32,6 +32,8 @@ def obs_list_to_state_vector(observation):
 
 
 if __name__ == '__main__':
+    dir = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__))), "tmp/maddpg")
+    # print(type(dir))
     # scenario = 'simple'
     args = tyro.cli(Args) 
     scenario = 'pistonball_v6'
@@ -57,10 +59,10 @@ if __name__ == '__main__':
     # action space is a list of arrays, assume each agent has same action space
     maddpg_agents = MADDPG(n_action_p_agent, n_agents, critic_action_dims,
                            alpha=0.01, beta=0.01, scenario=scenario,
-                           chkpt_dir='tmp/maddpg/')
+                           chkpt_dir=dir)
 
-    memory = MultiAgentReplayBuffer(1000, actor_dims,
-                                    n_action_p_agent, n_agents, batch_size=32,
+    memory = MultiAgentReplayBuffer(2000, actor_dims,
+                                    n_action_p_agent, n_agents, batch_size=64,
                                     agent_names=env.possible_agents)
 
     total_steps = 0
@@ -96,7 +98,7 @@ if __name__ == '__main__':
 
             memory.store_transition(obs, actions, reward, obs_, done)
 
-            if total_steps % 100 == 0 and not args.demo:
+            if total_steps % 10 == 0 and not args.demo:
                 maddpg_agents.learn(memory)
 
             obs = obs_
@@ -106,7 +108,7 @@ if __name__ == '__main__':
             episode_step += 1
 
         score_history.append(score)
-        avg_score = np.mean(score_history[-100:])
+        avg_score = np.mean(score_history[-10:])
         if not args.demo:
 
             if (avg_score > best_score) and (i > args.PRINT_INTERVAL):

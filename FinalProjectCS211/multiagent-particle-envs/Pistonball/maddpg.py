@@ -15,7 +15,7 @@ class MADDPG:
         self.n_agents = n_agents
         self.n_action_p_agent = n_action_p_agent
         self.critic_action_dims = critic_action_dims
-        chkpt_dir += scenario
+        chkpt_dir += "/" + scenario
         self.agents = {}
         for agent_idx, agent_name in enumerate(env.possible_agents):
             self.agents[agent_name] = Agent(self.n_action_p_agent,
