@@ -32,9 +32,9 @@ for i in range(len(file)):
     dir.append(os.path.join(reward_records_dir, file[i]))
 
 data = {
-    "Actor Critic": np.load(dir[0]),
     "MADDPG": np.load(dir[1]),
+    "DDPG": np.load(dir[3]),
+    "Actor Critic": np.load(dir[0]),
     "DQN": np.load(dir[2]),
-    "DDPG": np.load(dir[3])
 }
 plot(data)
