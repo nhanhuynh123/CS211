@@ -37,5 +37,4 @@ data = {
     "DQN": np.load(dir[2]),
     "DDPG": np.load(dir[3])
 }
-print(data["Actor Critic"].shape)
 plot(data)
