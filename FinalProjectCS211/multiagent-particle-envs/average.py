@@ -3,10 +3,10 @@ import os
 import sys
 
 reward_record_path = "/Users/cicilian/Desktop/CS211/FinalProjectCS211/multiagent-particle-envs/reward_records"
-name = "ddpg_reward_record"
+name = "maddpg_reward_record"
 epochs = "50000"
-files = [os.path.join(reward_record_path, f) for f in os.listdir(reward_record_path) if f.startswith(name+"_"+epochs)]
-print(files)
+files = [os.path.join(reward_record_path, f) for f in os.listdir(reward_record_path) if f.startswith(name+"_"+epochs) and not f.endswith("mean.npy")]
+print(len(files))
 all_arrays = [np.load(file) for file in files]
 for  array in all_arrays:
     print(array.shape)
