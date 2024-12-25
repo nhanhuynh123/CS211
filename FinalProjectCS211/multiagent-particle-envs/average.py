@@ -3,25 +3,13 @@ import os
 import sys
 
 reward_record_path = "/Users/cicilian/Desktop/CS211/FinalProjectCS211/multiagent-particle-envs/reward_records"
-name = "maac_reward_record"
-start = 1
-files = []
-while  True:
-    dir = os.path.join(reward_record_path, f"{name}_{start}.npy")
-    if os.path.exists(dir):
-        files.append(dir)
-    else:
-        break
-    start += 1
+name = "madqn_reward_record"
+epochs = "50000"
+files = [os.path.join(reward_record_path, f) for f in os.listdir(reward_record_path) if f.startswith(name+"_"+epochs)]
+print(files)
+all_arrays = [np.load(file) for file in files]
+for  array in all_arrays:
+    print(array.shape)
+mean = np.mean(all_arrays, axis=0)
 
-# all_arrays = [np.load(file) for file in files]
-# for i in range(len(all_arrays)):
-#     print(all_arrays[i].shape)
-dir = os.path.join(reward_record_path, f"{name}.npy")
-print(dir)
-temp = np.load(dir)
-print(temp.shape)
-
-# mean = np.mean(all_arrays, axis=0)
-
-# np.save(os.path.join(reward_record_path, f"{name}_mean.npy"), mean)
+np.save(os.path.join(reward_record_path, f"{name}_{epochs}_mean.npy"), mean)
