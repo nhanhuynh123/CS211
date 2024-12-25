@@ -3,7 +3,7 @@ import os
 import sys
 
 reward_record_path = "/Users/cicilian/Desktop/CS211/FinalProjectCS211/multiagent-particle-envs/reward_records"
-name = "maddpg_reward_record"
+name = "maac_reward_record"
 start = 1
 files = []
 while  True:
@@ -14,9 +14,13 @@ while  True:
         break
     start += 1
 
-all_arrays = [np.load(file) for file in files]
-for i in range(len(all_arrays)):
-    print(all_arrays[i].shape)
+# all_arrays = [np.load(file) for file in files]
+# for i in range(len(all_arrays)):
+#     print(all_arrays[i].shape)
+dir = os.path.join(reward_record_path, f"{name}.npy")
+print(dir)
+temp = np.load(dir)
+print(temp.shape)
 
 # mean = np.mean(all_arrays, axis=0)
 

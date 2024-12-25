@@ -111,5 +111,5 @@ if __name__ == "__main__":
             print("Episode ", i, " average score {:.1f}".format(avg_score))
             print("Best Score: ",best_score)
 
-    file_name = "madqn_reward_record"
+    file_name = "madqn_reward_record" + f"_{args.epochs}"
     save_with_unique_name(file_name=file_name, data=score_history)

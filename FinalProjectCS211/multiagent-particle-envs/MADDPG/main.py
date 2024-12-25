@@ -37,7 +37,7 @@ if __name__ == '__main__':
     dir = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__))), "tmp/maddpg")
     # scenario = 'simple'
     scenario = 'simple_adversary'
-    env = simple_adversary_v3.parallel_env(N=2, max_cycles=40, continuous_actions=True, render_mode ="human")
+    env = simple_adversary_v3.parallel_env(N=2, max_cycles=40, continuous_actions=True)
     obs = env.reset()
 
     n_agents = env.num_agents
@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
     total_steps = 0
     score_history = []
-    evaluate = True
+    evaluate = False
     best_score = -float("inf")
     if evaluate:
         maddpg_agents.load_checkpoint()
@@ -107,6 +107,6 @@ if __name__ == '__main__':
         if i % args.PRINT_INTERVAL == 0:
             print('episode', i, 'average score {:.1f}'.format(avg_score))
             print("best_score", best_score)
-    file_name = "maddpg_reward_record"
+    file_name = "maddpg_reward_record" + f"_{args.epochs}"
     save_with_unique_name(file_name=file_name, data=score_history)
     maddpg_agents.save_checkpoint()

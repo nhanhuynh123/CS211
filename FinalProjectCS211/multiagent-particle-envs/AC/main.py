@@ -73,5 +73,5 @@ if __name__ == "__main__":
             print("Best Score: ",best_score)
 
 
-    file_name = "maac_reward_record"      
+    file_name = "maac_reward_record" + f"_{args.epochs}"
     save_with_unique_name(file_name=file_name, data=score_history)
