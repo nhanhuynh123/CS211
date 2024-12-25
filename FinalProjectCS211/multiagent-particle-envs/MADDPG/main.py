@@ -11,15 +11,16 @@ import numpy as np
 from maddpg import MADDPG
 from buffer import MultiAgentReplayBuffer
 from pettingzoo.mpe import simple_adversary_v3
+import cv2
 import warnings
 import time
 import tyro 
 
 @dataclass
 class Args:
-    epochs: int  = 40000
+    epochs: int  = 5
     # Number games
-    PRINT_INTERVAL: int = 500
+    PRINT_INTERVAL: int = 1
     # Print frequency
     MAX_STEPS: int =25
     # Max episode steps
@@ -38,8 +39,10 @@ if __name__ == '__main__':
     # scenario = 'simple'
     scenario = 'simple_adversary'
     env = simple_adversary_v3.parallel_env(N=2, max_cycles=40, continuous_actions=True)
+    #env = simple_adversary_v3.parallel_env(N=2, max_cycles=40, continuous_actions=True, render_mode="rgb_array")
     obs = env.reset()
-
+    # video_folder = 'video_folder'
+    # os.makedirs(video_folder, exist_ok=True)
     n_agents = env.num_agents
     actor_dims = []
     for agent_name in env.agents:
@@ -66,15 +69,20 @@ if __name__ == '__main__':
         maddpg_agents.load_checkpoint()
     time.sleep(1)
     for i in range(args.epochs):
+        # fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec cho .mp4
+        # video_writer = cv2.VideoWriter(f'{video_folder}/episode_{i + 1}.mp4', fourcc, 15.0, (640, 480))  # Kích thước video
         obs, _ = env.reset(seed=i)
         score = 0
         done = [False] * n_agents
         episode_step = 0
         while not any(done):
-            if evaluate:
-                env.render()
 
-                time.sleep(0.12) # to slow down the action for the video
+            # if evaluate:  # Điều kiện evaluate
+            #     frame = env.render()
+            #     if isinstance(frame, np.ndarray) and frame.shape[2] == 3:  # Kiểm tra khung hình có 3 kênh (RGB)
+            #         frame_resized = cv2.resize(frame, (640, 480))  # Thay đổi kích thước về 640x480 nếu cần
+            #         video_writer.write(frame_resized)  # Ghi khung hình vào video
+            #     time.sleep(0.5)  # Điều chỉnh tốc độ cho video
 
             actions = maddpg_agents.choose_action(obs)
             obs_, reward, termination, truncation, _ = env.step(actions)
@@ -97,7 +105,7 @@ if __name__ == '__main__':
             score += sum(reward.values())
             total_steps += 1
             episode_step += 1
-
+        #video_writer.release()
         score_history.append(score)
         avg_score = np.mean(score_history[-100:])
         if not evaluate:
