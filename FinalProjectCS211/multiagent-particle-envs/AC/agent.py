@@ -15,6 +15,6 @@ class Agent:
 
     def choose_action(self, observation):
         state = T.tensor([observation], dtype=T.float).to(self.actor.device)
-        actions_probs = self.actor.forward(state).detach().numpy()[0]
+        actions_probs = self.actor.forward(state).detach().cpu().numpy()[0]
         actions = np.random.choice(len(actions_probs), p=actions_probs)
         return actions
