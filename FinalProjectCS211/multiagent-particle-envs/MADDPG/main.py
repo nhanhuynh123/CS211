@@ -22,7 +22,7 @@ class Args:
     # Number games
     PRINT_INTERVAL: int = 1
     # Print frequency
-    MAX_STEPS: int =25
+    MAX_STEPS: int = 25
     # Max episode steps
     demo = False
 
@@ -63,9 +63,9 @@ if __name__ == '__main__':
 
     total_steps = 0
     score_history = []
-    evaluate = False
+    
     best_score = -float("inf")
-    if evaluate:
+    if args.demo:
         maddpg_agents.load_checkpoint()
     time.sleep(1)
     for i in range(args.epochs):
@@ -77,7 +77,7 @@ if __name__ == '__main__':
         episode_step = 0
         while not any(done):
 
-            # if evaluate:  # Điều kiện evaluate
+            # if args.demo:  # Điều kiện args.demo
             #     frame = env.render()
             #     if isinstance(frame, np.ndarray) and frame.shape[2] == 3:  # Kiểm tra khung hình có 3 kênh (RGB)
             #         frame_resized = cv2.resize(frame, (640, 480))  # Thay đổi kích thước về 640x480 nếu cần
@@ -97,7 +97,7 @@ if __name__ == '__main__':
 
             memory.store_transition(obs, state, actions, reward, obs_, state_, done)
             
-            if total_steps % 100 == 0 and not evaluate:
+            if total_steps % 100 == 0 and not args.demo:
                 maddpg_agents.learn(memory)
 
             obs = obs_
@@ -108,7 +108,7 @@ if __name__ == '__main__':
         #video_writer.release()
         score_history.append(score)
         avg_score = np.mean(score_history[-100:])
-        if not evaluate:
+        if not args.demo:
 
             if (avg_score > best_score):
                 best_score = avg_score
