@@ -11,6 +11,7 @@ import numpy as np
 from maddpg import MADDPG
 from buffer import MultiAgentReplayBuffer
 from pettingzoo.mpe import simple_adversary_v3
+import cv2
 import warnings
 import time
 import tyro 
@@ -35,10 +36,13 @@ def obs_list_to_state_vector(observation):
 if __name__ == '__main__':
     args = tyro.cli(Args)
     dir = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__))), "tmp/maddpg")
+    # scenario = 'simple'
     scenario = 'simple_adversary'
-    env = simple_adversary_v3.parallel_env(N=2, max_cycles=40, continuous_actions=True)
-    # env = simple_adversary_v3.parallel_env(N=2, max_cycles=100, continuous_actions=True, render_mode="rgb_array")
+    # env = simple_adversary_v3.parallel_env(N=2, max_cycles=100, continuous_actions=True)
+    env = simple_adversary_v3.parallel_env(N=2, max_cycles=100, continuous_actions=True, render_mode="rgb_array")
     obs = env.reset()
+    video_folder = 'video_folder'
+    os.makedirs(video_folder, exist_ok=True)
     n_agents = env.num_agents
     actor_dims = []
     for agent_name in env.agents:
@@ -65,6 +69,8 @@ if __name__ == '__main__':
         maddpg_agents.load_checkpoint()
     time.sleep(1)
     for i in range(args.epochs):
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec cho .mp4
+        video_writer = cv2.VideoWriter(f'{video_folder}/episode_{i + 1}.mp4', fourcc, 15.0, (640, 480))  # Kích thước video
         obs, _ = env.reset(seed=i)
         score = 0
         done = [False] * n_agents
@@ -73,6 +79,9 @@ if __name__ == '__main__':
 
             if args.demo:  # Điều kiện args.demo
                 frame = env.render()
+                if isinstance(frame, np.ndarray) and frame.shape[2] == 3:  # Kiểm tra khung hình có 3 kênh (RGB)
+                    frame_resized = cv2.resize(frame, (640, 480))  # Thay đổi kích thước về 640x480 nếu cần
+                    video_writer.write(frame_resized)  # Ghi khung hình vào video
                 time.sleep(0.5)  # Điều chỉnh tốc độ cho video
 
             actions = maddpg_agents.choose_action(obs)
@@ -96,6 +105,7 @@ if __name__ == '__main__':
             score += sum(reward.values())
             total_steps += 1
             episode_step += 1
+        # video_writer.release()
         score_history.append(score)
         avg_score = np.mean(score_history[-100:])
         if not args.demo:
@@ -105,5 +115,3 @@ if __name__ == '__main__':
         if i % args.PRINT_INTERVAL == 0:
             print('episode', i, 'average score {:.1f}'.format(avg_score))
             print("best_score", best_score)
-    file_name = "maddpg_reward_record" + f"_{args.epochs}"
-    save_with_unique_name(file_name=file_name, data=score_history)
