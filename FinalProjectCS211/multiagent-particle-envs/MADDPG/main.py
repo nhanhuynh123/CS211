@@ -24,7 +24,7 @@ class Args:
     # Print frequency
     MAX_STEPS: int = 25
     # Max episode steps
-    demo = False
+    demo: bool = False
 
 def obs_list_to_state_vector(observation):
     state = np.array([])
