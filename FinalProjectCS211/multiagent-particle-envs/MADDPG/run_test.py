@@ -84,8 +84,8 @@ if __name__ == '__main__':
                     video_writer.write(frame_resized)  # Ghi khung hình vào video
                 time.sleep(0.5)  # Điều chỉnh tốc độ cho video
 
-            actions = maddpg_agents.choose_action(obs)
-            # actions = {agent: env.action_space(agent).sample() for agent in env.agents}
+            # actions = maddpg_agents.choose_action(obs)
+            actions = {agent: env.action_space(agent).sample() for agent in env.agents}
             obs_, reward, termination, truncation, _ = env.step(actions)
 
             if any(termination.values()) or any(truncation.values()) or (episode_step >= args.MAX_STEPS):
