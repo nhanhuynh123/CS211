@@ -17,7 +17,7 @@ import tyro
 
 @dataclass
 class Args:
-    epochs: int  = 5
+    epochs: int  = 25000
     # Number games
     PRINT_INTERVAL: int = 1
     # Print frequency
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     args = tyro.cli(Args)
     dir = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__))), "tmp/maddpg")
     scenario = 'simple_adversary'
-    env = simple_adversary_v3.parallel_env(N=2, max_cycles=40, continuous_actions=True)
+    env = simple_adversary_v3.parallel_env(N=2, max_cycles=100, continuous_actions=True)
     # env = simple_adversary_v3.parallel_env(N=2, max_cycles=100, continuous_actions=True, render_mode="rgb_array")
     obs = env.reset()
     n_agents = env.num_agents

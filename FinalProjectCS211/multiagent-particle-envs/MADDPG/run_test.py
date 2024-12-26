@@ -41,7 +41,7 @@ if __name__ == '__main__':
     # env = simple_adversary_v3.parallel_env(N=2, max_cycles=100, continuous_actions=True)
     env = simple_adversary_v3.parallel_env(N=2, max_cycles=100, continuous_actions=True, render_mode="rgb_array")
     obs = env.reset()
-    video_folder = 'video_folder'
+    video_folder = 'MADDPG/video_folder'
     os.makedirs(video_folder, exist_ok=True)
     n_agents = env.num_agents
     actor_dims = []
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     for i in range(args.epochs):
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec cho .mp4
         video_writer = cv2.VideoWriter(f'{video_folder}/episode_{i + 1}.mp4', fourcc, 15.0, (640, 480))  # Kích thước video
-        obs, _ = env.reset(seed=i)
+        obs, _ = env.reset()
         score = 0
         done = [False] * n_agents
         episode_step = 0
@@ -85,33 +85,22 @@ if __name__ == '__main__':
                 time.sleep(0.5)  # Điều chỉnh tốc độ cho video
 
             actions = maddpg_agents.choose_action(obs)
+            # actions = {agent: env.action_space(agent).sample() for agent in env.agents}
             obs_, reward, termination, truncation, _ = env.step(actions)
-            state = np.concatenate([i for i in obs.values()])
-            state_ = np.concatenate([i for i in obs_.values()])
-
-            if episode_step >= args.MAX_STEPS:
-                done = [True] * n_agents
 
             if any(termination.values()) or any(truncation.values()) or (episode_step >= args.MAX_STEPS):
                 done = [True] * n_agents
 
-            memory.store_transition(obs, state, actions, reward, obs_, state_, done)
-            
-            if total_steps % 100 == 0 and not args.demo:
-                maddpg_agents.learn(memory)
 
             obs = obs_
 
             score += sum(reward.values())
             total_steps += 1
             episode_step += 1
-        # video_writer.release()
+        video_writer.release()
         score_history.append(score)
-        avg_score = np.mean(score_history[-100:])
-        if not args.demo:
+        avg_score = np.mean(score_history[-1:])
 
-            if (avg_score > best_score):
-                best_score = avg_score
         if i % args.PRINT_INTERVAL == 0:
             print('episode', i, 'average score {:.1f}'.format(avg_score))
             print("best_score", best_score)
