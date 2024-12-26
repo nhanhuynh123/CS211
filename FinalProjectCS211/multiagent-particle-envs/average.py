@@ -3,7 +3,7 @@ import os
 import sys
 
 reward_record_path = "/Users/cicilian/Desktop/CS211/FinalProjectCS211/multiagent-particle-envs/reward_records"
-name = "maac_reward_record"
+name = "madqn_reward_record"
 epochs = "50000"
 files = [os.path.join(reward_record_path, f) for f in os.listdir(reward_record_path) if f.startswith(name+"_"+epochs) and not f.endswith("mean.npy")]
 print(files)
