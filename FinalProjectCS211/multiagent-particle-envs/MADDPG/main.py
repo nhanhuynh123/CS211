@@ -17,11 +17,11 @@ import tyro
 
 @dataclass
 class Args:
-    epochs: int  = 25000
+    epochs: int  = 500000
     # Number games
-    PRINT_INTERVAL: int = 1
+    PRINT_INTERVAL: int = 500
     # Print frequency
-    MAX_STEPS: int = 25
+    MAX_STEPS: int = 40
     # Max episode steps
     demo: bool = False
 
@@ -98,11 +98,12 @@ if __name__ == '__main__':
         score_history.append(score)
         avg_score = np.mean(score_history[-100:])
         if not args.demo:
-
-            if (avg_score > best_score):
+            if (avg_score > best_score) and (i > args.PRINT_INTERVAL):
                 best_score = avg_score
+                maddpg_agents.save_checkpoint()
         if i % args.PRINT_INTERVAL == 0:
             print('episode', i, 'average score {:.1f}'.format(avg_score))
             print("best_score", best_score)
+
     file_name = "maddpg_reward_record" + f"_{args.epochs}"
     save_with_unique_name(file_name=file_name, data=score_history)

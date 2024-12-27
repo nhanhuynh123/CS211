@@ -26,7 +26,7 @@ def plot(data):
     plt.show()
 # 4, 11, 2, 3
 #
-file = ["maac_reward_record_50000_mean.npy", "maddpg_reward_record_50000_mean.npy", "madqn_reward_record_50000_mean.npy", "ddpg_reward_record_50000_mean.npy"]
+file = ["maac_reward_record_50000_mean.npy", "maddpg_reward_record_500000.npy", "madqn_reward_record_50000_mean.npy", "ddpg_reward_record_50000_mean.npy"]
 dir = []
 for i in range(len(file)):
     dir.append(os.path.join(reward_records_dir, file[i]))
